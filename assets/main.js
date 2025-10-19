@@ -85,9 +85,77 @@ const account = new BankAccount();
 console.log(`موجودی فعلی: ${account.balance}`); //undefined: بدون پراپرتی Getter
 
 account.balance = 1000;
-console.log(`موجودی فعلی: ${account.balance}`);
+console.log(`موجودی جدید: ${account.balance}`);
 
 account.balance = -500;
-console.log(`موجودی فعلی: ${account.balance}`);
+console.log(`موجودی جدید: ${account.balance}`);
 
-// part249 5:37
+//---------Encapsulation & Abstraction---------
+class BankAccount1{
+    constructor(owner,balance1){
+        this.owner = owner; //public field
+        this._balance1 = balance1; //private-ish field 
+    }
+
+    //Getter----Encapsulation
+    get balance1(){
+        return this._balance1;
+    }
+
+    //متد واریز-----Abstraction
+    deposit(amount1){
+        if(amount1>0){
+            this._balance1 += amount1;
+            console.log(`${amount1} تومان واریز شد.موجودی جدید: ${this._balance1}`);            
+        }else{
+            console.log("مقدار واریز نامعتبر است.");            
+        }
+    }
+
+    //متد برداشت-------(Abstraction+validation)
+    withdraw(amount1){
+        if(amount1>0 && amount1<=this._balance1){
+            this._balance1 -= amount1;
+            console.log(`${amount1} تومان برداشت شد. موجودی جدید: ${this._balance1}`);            
+        }else{
+            console.log("برداشت نامعتبر است.");
+            
+        }
+    }
+
+    //Static Method
+    static accountType(){
+        console.log("این یک حساب بانکی استاندارد است");        
+    }
+}
+
+class PremiumAccount extends BankAccount1{
+    constructor(owner,balance1,cashback){
+        super(owner,balance1); //ارث بری + constructor
+        this.cashback = cashback;
+    }
+
+    //Override Method(پیاده سازی جدید متد والد)
+    withdraw(amount1){
+        if(amount1 <= this._balance1){
+            this._balance1 -= amount1;
+            let cb = amount1 * this.cashback;
+            this._balance1 += cb //برگرداندن نقدی
+            console.log(`${amount1} تومان برداشت شد:
+                 ${cb} تومان کش بک دریافت شد :
+                 موجودی جدید: ${this._balance1}`);            
+        }else{
+            console.log("برداشت نامعتبر است!");            
+        }
+    }
+}
+
+const myAccount = new BankAccount1("Hesam",2000);
+console.log(myAccount.balance1);
+myAccount.deposit(500);
+myAccount.withdraw(300);
+BankAccount1.accountType();
+
+const myPremiumAccount = new PremiumAccount("Sara", 2000 , 0.2);
+myPremiumAccount.withdraw(400);
+
